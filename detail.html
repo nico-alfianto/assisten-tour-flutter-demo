@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Destinasi</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="hero-img">
+  <img id="destImg" src="">
+  <button class="back-btn" onclick="history.back()">Kembali</button>
+</div>
+
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <span class="badge" id="destCategory"></span>
+    <span><b id="destRating"></b> <small id="destReviewCount"></small></span>
+  </div>
+
+  <h1 id="destName"></h1>
+  <p>Lokasi: <span id="destLocation"></span></p>
+  <hr>
+
+  <h3>Tentang Destinasi</h3>
+  <p id="destDesc" style="color:grey;line-height:1.6"></p>
+
+  <h3>Jadwal Pemberangkatan</h3>
+  <div id="scheduleList"></div>
+  <hr>
+
+  <h3>Ulasan Pengunjung <span id="reviewTotal" style="color:#0F766E"></span></h3>
+  <div id="reviewList"></div>
+
+  <div style="height:100px"></div>
+</div>
+
+<div class="sticky-bar">
+  <div>
+    <small>Mulai Dari</small><br>
+    <b style="font-size:20px;color:#0F766E" id="destPrice"></b>
+  </div>
+  <button onclick="goBooking()" class="btn-primary" style="flex:1">Pesan Sekarang</button>
+</div>
+
+<script src="script.js"></script>
+<script>
+const destId = new URLSearchParams(location.search).get('id');
+let selectedSchedule = "";
+const dest = TourStore.destinationsList.find(d=>d.id==destId);
+
+if(dest){
+  destImg.src = dest.image;
+  destName.innerText = dest.name;
+  destLocation.innerText = dest.location;
+  destCategory.innerText = dest.category;
+  destRating.innerText = dest.rating;
+  destReviewCount.innerText = `(${dest.reviewsCount} ulasan)`;
+  destDesc.innerText = dest.description;
+  destPrice.innerText = formatRupiah(dest.price);
+  selectedSchedule = dest.schedules[0];
+
+  scheduleList.innerHTML = dest.schedules.map(s=>`<span class="chip active" onclick="selectChip(this,'${s}')">${s}</span>`).join('');
+
+  const destReviews = TourStore.reviewsList.filter(r=>r.destinationName==dest.name);
+  reviewTotal.innerText = `${destReviews.length} Ulasan`;
+  reviewList.innerHTML = destReviews.map(r=>`<div class="review-card"><b>${r.userName}</b> Rating: ${r.rating}<p>${r.comment}</p><small>${r.date}</small></div>`).join('');
+}
+
+function selectChip(el,s){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  selectedSchedule = s;
+}
+
+function goBooking(){
+  location=`booking.html?id=${destId}&schedule=${selectedSchedule}`;
+}
+</script>
+</body>
+</html>
