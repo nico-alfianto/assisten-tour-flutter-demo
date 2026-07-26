@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pemesanan Tiket</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header style="background:#0F766E;color:white;padding:16px;text-align:center;font-weight:bold">
+  Pemesanan Tiket
+</header>
+
+<div style="padding:20px">
+  <div id="destInfo" style="background:white;padding:12px;border-radius:20px;border:1px solid #eee;display:flex;gap:14px;margin-bottom:24px"></div>
+
+  <h3>Detail Kontak & Pemesanan</h3>
+  <form onsubmit="submitBooking(event)">
+    <label>Nama Lengkap</label>
+    <input type="text" id="name" class="input" required>
+
+    <label>Nomor WhatsApp</label>
+    <input type="tel" id="phone" class="input" maxlength="12" required>
+
+    <label>Alamat Penjemputan</label>
+    <input type="text" id="pickup" class="input" placeholder="Kosongkan jika datang sendiri">
+
+    <label>Tanggal Keberangkatan</label>
+    <input type="date" id="date" class="input" required>
+
+    <label>Transportasi</label>
+    <select id="transport" class="input">
+      <option value="0">Datang Sendiri</option>
+      <option value="250000">Bus Pariwisata - Rp 250.000</option>
+      <option value="1500000">Garuda Indonesia - Rp 1.500.000</option>
+    </select>
+
+    <label>Jumlah Orang</label>
+    <input type="number" id="pax" class="input" value="1" min="1">
+
+    <h4>Total: <span id="totalPrice" style="color:#0F766E">Rp 0</span></h4>
+    <button type="submit" class="btn-primary">Konfirmasi Pemesanan</button>
+  </form>
+</div>
+
+<script src="script.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const dest = TourStore.destinationsList.find(d=>d.id==params.get('id'));
+const schedule = params.get('schedule');
+
+destInfo.innerHTML = `<img src="${dest.image}" width="90" style="border-radius:15px">
+  <div><b>${dest.name}</b><br><small>${dest.location}</small><br><b style="color:#0F766E">${formatRupiah(dest.price)}</b><br><small>Jadwal: ${schedule}</small></div>`;
+
+function calcTotal(){
+  const total = (dest.price*parseInt(pax.value)) + (parseInt(transport.value)*parseInt(pax.value)) + 123;
+  totalPrice.innerText = formatRupiah(total);
+}
+pax.onchange = transport.onchange = calcTotal; 
+calcTotal();
+
+function submitBooking(e){
+  e.preventDefault();
+  TourStore.addBooking({
+    id: generateId('BK'),
+    destName: dest.name,
+    destImage: dest.image,
+    date: date.value,
+    schedule: schedule,
+    name: name.value,
+    phone: phone.value,
+    pickup: pickup.value,
+    pax: parseInt(pax.value),
+    transportPrice: parseInt(transport.value),
+    total: parseInt(totalPrice.innerText.replace(/[^0-9]/g,'')),
+    status: 'Pending',
+    seat: generateSeatNumber(''),
+    ticket: generateTicketNumber()
+  });
+  alert('Pemesanan Berhasil!');
+  location = 'schedule.html';
+}
+</script>
+</body>
+</html>
