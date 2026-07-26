@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pusat Pembayaran</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header style="background:#0F766E;color:white;text-align:center;padding:16px;font-weight:bold">
+  Pusat Pembayaran
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab(0)">Belum Bayar (<span id="unpaidCount">0</span>)</div>
+  <div class="tab" onclick="switchTab(1)">Sudah Bayar (<span id="paidCount">0</span>)</div>
+</div>
+
+<div id="tab0" style="padding:16px"></div>
+<div id="tab1" style="padding:16px;display:none"></div>
+
+<div class="modal" id="paymentModal">
+  <div class="modal-content">
+    <div style="width:40px;height:5px;background:#ddd;border-radius:10px;margin:0 auto 20px"></div>
+    <h3>Pilih Metode Pembayaran <small id="bookingId"></small></h3>
+    <div style="background:#e6f4f1;padding:16px;border-radius:15px;margin:20px 0">
+      <b>Total Tagihan:</b> <span id="totalTagihan" style="color:#0F766E;font-size:18px;float:right"></span>
+    </div>
+    <div id="paymentMethods"></div>
+    <button class="btn-primary" onclick="processPayment()">Bayar Sekarang</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+let selectedBooking = null;
+let selectedMethod = 'GOPAY';
+const methods = [
+  {code:'GOPAY', name:'GoPay'},
+  {code:'OVO', name:'OVO'},
+  {code:'BCA_VA', name:'BCA Virtual Account'},
+  {code:'MANDIRI_VA', name:'Mandiri Virtual Account'}
+];
+
+function render(){
+  const unpaid = TourStore.bookingsList.filter(b=>b.status=='Pending');
+  const paid = TourStore.bookingsList.filter(b=>b.status=='Lunas');
+  unpaidCount.innerText = unpaid.length;
+  paidCount.innerText = paid.length;
+  
+  tab0.innerHTML = unpaid.map(b=>invoiceCard(b,false)).join('') || '<p style="text-align:center;color:grey">Tidak ada tagihan</p>';
+  tab1.innerHTML = paid.map(b=>invoiceCard(b,true)).join('') || '<p style="text-align:center;color:grey">Belum ada transaksi</p>';
+}
+
+function invoiceCard(b,isPaid){
+  return `<div class="invoice">
+    <div style="display:flex;justify-content:space-between">
+      <b>${b.id}</b>
+      <span class="badge ${isPaid?'green':'orange'}">${isPaid?'LUNAS':'PENDING'}</span>
+    </div>
+    <hr>
+    <div style="display:flex;gap:14px">
+      <img src="${b.destImage}" width="70" style="border-radius:12px">
+      <div>
+        <b>${b.destName}</b><br>
+        <small>${b.date} - ${b.schedule}</small><br>
+        <b style="color:#0F766E">${formatRupiah(b.total)}</b>
+      </div>
+    </div>
+    ${!isPaid ? `<button class="btn-primary" style="width:100%;margin-top:12px" onclick="showPayment('${b.id}')">Bayar Sekarang</button>` : ''}
+  </div>`
+}
+
+function showPayment(id){
+  selectedBooking = TourStore.bookingsList.find(b=>b.id==id);
+  bookingId.innerText = id;
+  totalTagihan.innerText = formatRupiah(selectedBooking.total);
+  paymentMethods.innerHTML = methods.map(m=>`<div class="payment-option" onclick="selectedMethod='${m.code}'">${m.name}</div>`).join('');
+  paymentModal.style.display = 'flex';
+}
+
+function processPayment(){
+  TourStore.confirmPayment(selectedBooking.id);
+  paymentModal.style.display = 'none';
+  alert('Pembayaran Berhasil!');
+  render();
+}
+
+function switchTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i==j));
+  tab0.style.display = i==0 ? 'block' : 'none';
+  tab1.style.display = i==1 ? 'block' : 'none';
+}
+
+render();
+</script>
+</body>
+</html>
