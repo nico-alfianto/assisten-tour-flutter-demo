@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jadwal Pemberangkatan</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header style="background:#0F766E;color:white;text-align:center;padding:16px;font-weight:bold">
+  Jadwal Pemberangkatan
+</header>
+
+<div id="scheduleList" style="padding:16px"></div>
+
+<div class="boarding-pass" id="bpModal" onclick="this.style.display='none'">
+  <div class="bp-content" onclick="event.stopPropagation()">
+    <h2>Boarding Pass</h2>
+    <div id="bpBody"></div>
+    <button onclick="bpModal.style.display='none'" class="btn-primary">Tutup</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+function render(){
+  if(TourStore.bookingsList.length == 0){
+    scheduleList.innerHTML = `<div style="text-align:center;padding:40px;color:grey">
+      <b>Belum ada jadwal perjalanan</b><br>
+      <small>Pesan destinasi dulu untuk melihat jadwal</small>
+    </div>`;
+    return;
+  }
+
+  scheduleList.innerHTML = TourStore.bookingsList.map(b=>{
+    const isPaid = b.status == 'Lunas';
+    const days = Math.max(0, Math.floor((new Date(b.date) - new Date()) / 86400000));
+    
+    return `<div class="schedule-card">
+      <div class="line ${isPaid?'paid':'pending'}"></div>
+      <div style="padding:16px;flex:1">
+        <div style="display:flex;justify-content:space-between">
+          <small>${b.id}</small>
+          <span class="badge ${isPaid?'green':'orange'}">${isPaid ? days+' hari lagi' : 'Belum Lunas'}</span>
+        </div>
+        <h3>${b.destName}</h3>
+        <small>Tanggal: ${b.date} | Jam: ${b.schedule}</small>
+        <hr>
+        <div style="text-align:right">
+          ${isPaid ? 
+            `<button class="btn-primary" style="padding:8px 16px;font-size:12px" onclick="showBP('${b.id}')">Lihat Boarding Pass</button>` 
+            : 
+            `<button style="background:orange;color:white;border:none;padding:8px 16px;border-radius:10px;font-size:12px" onclick="location='payment.html'">Bayar Sekarang</button>`
+          }
+        </div>
+      </div>
+    </div>`
+  }).join('');
+}
+render();
+</script>
+</body>
+</html>
