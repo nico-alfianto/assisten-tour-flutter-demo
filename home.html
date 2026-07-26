@@ -13,46 +13,73 @@
       <small id="greeting">Halo Traveler,</small>
       <h2>Mau Liburan Ke Mana?</h2>
     </div>
-    <img id="avatar" src="https://i.pravatar.cc/150?img=65" class="avatar">
+    <img id="avatar" src="https://i.pravatar.cc/150?img=65" class="avatar" onclick="location='profile.html'" style="cursor:pointer">
   </div>
 
   <div class="banner-slider">
-    <div class="slide" style="background-image:url('assets/banners/banner1.jpg')">
+    <div class="slide" style="background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url('assets/banners/banner1.jpg')">
       <h3>Jelajahi Keindahan Nusantara</h3>
       <p>Diskon hingga 30% untuk pemesanan pertama!</p>
     </div>
-    <div class="slide" style="background-image:url('assets/banners/banner2.jpg')">
+    <div class="slide" style="background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url('assets/banners/banner2.jpg')">
       <h3>Petualangan Baru Menanti Anda</h3>
       <p>Dapatkan paket tour eksklusif hanya minggu ini.</p>
     </div>
-    <div class="slide" style="background-image:url('assets/banners/banner3.jpg')">
+    <div class="slide" style="background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url('assets/banners/banner3.jpg')">
       <h3>Liburan Nyaman & Terpercaya</h3>
       <p>Layanan terbaik dengan asisten tour profesional.</p>
     </div>
     <div class="dots"></div>
   </div>
 
-  <input type="text" placeholder="Cari destinasi atau lokasi..." class="search">
+  <input type="text" id="searchInput" placeholder="Cari destinasi atau lokasi..." class="search">
 
   <h3 style="margin-top:20px">Rekomendasi Untukmu</h3>
   <div class="scroll-x" id="rekomendasi"></div>
+
+  <h3 style="margin-top:20px">Semua Destinasi</h3>
+  <div class="grid-2" id="semuaDestinasi"></div>
 
   <div style="height:80px"></div>
 </div>
 
 <nav class="bottom-nav">
   <a class="active"><span>Home</span></a>
-  <a onclick="alert('Pilih destinasi dulu')"><span>Booking</span></a>
   <a onclick="location='schedule.html'"><span>Jadwal</span></a>
   <a onclick="location='payment.html'"><span>Bayar</span></a>
   <a onclick="location='review.html'"><span>Review</span></a>
+  <a onclick="location='profile.html'"><span>Profil</span></a>
 </nav>
 
 <script src="script.js"></script>
 <script>
-  if(TourStore.currentUser) greeting.innerText = 'Halo '+TourStore.currentUser.name.split(' ')[0]+',';
-  document.getElementById('rekomendasi').innerHTML = TourStore.destinationsList.filter(d=>d.rating>=4.9).map(DestinationCard).join('');
+  // 1. Cek login + isi greeting + avatar
+  if(!TourStore.currentUser){
+    alert('Silakan login dulu');
+    location='login.html';
+  }
+  if(TourStore.currentUser){
+    greeting.innerText = 'Halo '+TourStore.currentUser.name.split(' ')[0]+',';
+    avatar.src = TourStore.currentUser.avatarUrl;
+  }
 
+  // 2. Render Destinasi
+  function renderDestinasi(list){
+    rekomendasi.innerHTML = list.filter(d=>d.rating>=4.9).map(DestinationCard).join('');
+    semuaDestinasi.innerHTML = list.map(DestinationCard).join('');
+  }
+  renderDestinasi(TourStore.destinationsList);
+
+  // 3. Fitur Search
+  searchInput.oninput = () => {
+    const q = searchInput.value.toLowerCase();
+    const filtered = TourStore.destinationsList.filter(d=>
+      d.name.toLowerCase().includes(q) || d.location.toLowerCase().includes(q)
+    );
+    renderDestinasi(filtered);
+  }
+
+  // 4. Banner Slider Auto
   let slideIndex=0;
   const slides=document.querySelectorAll('.slide');
   slides.forEach((_,i)=>dots.innerHTML+=`<div class="dot" onclick="showSlide(${i})"></div>`);
