@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home - Assistant Tour</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <div class="topbar">
+    <div>
+      <small id="greeting">Halo Traveler,</small>
+      <h2>Mau Liburan Ke Mana?</h2>
+    </div>
+    <img id="avatar" src="https://i.pravatar.cc/150?img=65" class="avatar">
+  </div>
+
+  <div class="banner-slider">
+    <div class="slide" style="background-image:url('assets/banners/banner1.jpg')">
+      <h3>Jelajahi Keindahan Nusantara</h3>
+      <p>Diskon hingga 30% untuk pemesanan pertama!</p>
+    </div>
+    <div class="slide" style="background-image:url('assets/banners/banner2.jpg')">
+      <h3>Petualangan Baru Menanti Anda</h3>
+      <p>Dapatkan paket tour eksklusif hanya minggu ini.</p>
+    </div>
+    <div class="slide" style="background-image:url('assets/banners/banner3.jpg')">
+      <h3>Liburan Nyaman & Terpercaya</h3>
+      <p>Layanan terbaik dengan asisten tour profesional.</p>
+    </div>
+    <div class="dots"></div>
+  </div>
+
+  <input type="text" placeholder="Cari destinasi atau lokasi..." class="search">
+
+  <h3 style="margin-top:20px">Rekomendasi Untukmu</h3>
+  <div class="scroll-x" id="rekomendasi"></div>
+
+  <div style="height:80px"></div>
+</div>
+
+<nav class="bottom-nav">
+  <a class="active"><span>Home</span></a>
+  <a onclick="alert('Pilih destinasi dulu')"><span>Booking</span></a>
+  <a onclick="location='schedule.html'"><span>Jadwal</span></a>
+  <a onclick="location='payment.html'"><span>Bayar</span></a>
+  <a onclick="location='review.html'"><span>Review</span></a>
+</nav>
+
+<script src="script.js"></script>
+<script>
+  if(TourStore.currentUser) greeting.innerText = 'Halo '+TourStore.currentUser.name.split(' ')[0]+',';
+  document.getElementById('rekomendasi').innerHTML = TourStore.destinationsList.filter(d=>d.rating>=4.9).map(DestinationCard).join('');
+
+  let slideIndex=0;
+  const slides=document.querySelectorAll('.slide');
+  slides.forEach((_,i)=>dots.innerHTML+=`<div class="dot" onclick="showSlide(${i})"></div>`);
+  function showSlide(i){
+    slideIndex=i;
+    slides.forEach((s,j)=>s.style.display=i==j?'flex':'none');
+    document.querySelectorAll('.dot').forEach((d,j)=>d.classList.toggle('active',i==j));
+  }
+  showSlide(0);
+  setInterval(()=>{slideIndex=(slideIndex+1)%slides.length;showSlide(slideIndex)},4000);
+</script>
+</body>
+</html>
