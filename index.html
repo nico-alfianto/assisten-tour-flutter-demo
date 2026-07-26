@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assistant Tour</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="hero" style="background-image:url('assets/banners/banner1.jpg')">
+  <div class="overlay"></div>
+  <header>
+    <div class="brand"><span>🧭</span> Assistant Tour</div>
+    <button onclick="location='login.html'">Masuk</button>
+  </header>
+  <div class="hero-content">
+    <span class="badge">⭐ Asisten Perjalanan Terbaik Anda</span>
+    <h1>Jelajahi Surga Nusantara Bersama Kami</h1>
+    <p>Temukan keindahan Bali, petualangan Bromo, dan kemegahan Labuan Bajo dalam genggaman tangan Anda.</p>
+  </div>
+</div>
+
+<div class="stats">
+  <div><b>8+</b><span>Destinasi Pilihan</span></div>
+  <div><b>500+</b><span>Ulasan Traveler</span></div>
+  <div><b>4.9★</b><span>Rating Kepuasan</span></div>
+</div>
+
+<div class="section">
+  <h2>Kenapa Memilih Kami?</h2>
+  <div class="grid-2">
+    <div class="card"><div class="icon teal">🏔️</div><b>Destinasi Populer</b><p>Destinasi wisata terbaik Indonesia.</p></div>
+    <div class="card"><div class="icon amber">📅</div><b>Jadwal Fleksibel</b><p>Bebas memilih jam keberangkatan.</p></div>
+    <div class="card"><div class="icon blue">💳</div><b>Pembayaran Mudah</b><p>Verifikasi cepat dengan kode unik.</p></div>
+    <div class="card"><div class="icon purple">🎧</div><b>Layanan 24/7</b><p>Tour guide berlisensi siap.</p></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Destinasi Impian Anda <a href="login.html">Lihat Semua ></a></h2>
+  <div class="scroll-x" id="dest-list"></div>
+</div>
+
+<div class="cta">
+  <h2>Siap Untuk Memulai Perjalanan?</h2>
+  <button class="btn-white" onclick="location='login.html'">Mulai Jelajah Sekarang</button>
+  <button class="btn-outline" onclick="demoLogin()">Coba Akun Demo</button>
+</div>
+
+<script src="script.js"></script>
+<script>
+  document.getElementById('dest-list').innerHTML = TourStore.destinationsList.slice(0,3).map(DestinationCard).join('');
+  function demoLogin(){ TourStore.login('budi@gmail.com','password123'); location='home.html'; }
+</script>
+</body>
+</html>
