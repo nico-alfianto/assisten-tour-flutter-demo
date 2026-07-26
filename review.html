@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ulasan & Review</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header style="background:#0F766E;color:white;text-align:center;padding:16px;font-weight:bold">
+  Ulasan & Review
+</header>
+
+<div style="padding:16px">
+  <div style="background:white;padding:20px;border-radius:20px;border:1px solid #eee;margin-bottom:24px">
+    <h3>Tulis Ulasan Perjalanan</h3>
+    <form onsubmit="submitReview(event)">
+      <label>Destinasi</label>
+      <select id="destSelect" class="input"></select>
+
+      <label>Nama Anda</label>
+      <input type="text" id="reviewName" class="input" required>
+
+      <label>Komentar</label>
+      <textarea id="reviewComment" class="input" rows="3" required></textarea>
+
+      <button type="submit" class="btn-primary">Kirim Ulasan Wisata</button>
+    </form>
+  </div>
+
+  <h3>Umpan Balik Pengunjung</h3>
+  <div id="reviewList"></div>
+</div>
+
+<script src="script.js"></script>
+<script>
+destSelect.innerHTML = TourStore.destinationsList.map(d=>`<option>${d.name}</option>`).join('');
+if(TourStore.currentUser) reviewName.value = TourStore.currentUser.name;
+
+function submitReview(e){
+  e.preventDefault();
+  TourStore.addReview({
+    id: generateId('RV'),
+    destinationName: destSelect.value,
+    userName: reviewName.value,
+    rating: 5.0,
+    comment: reviewComment.value,
+    date: new Date().toLocaleDateString('id-ID')
+  });
+  alert('Ulasan terkirim!');
+  reviewComment.value = '';
+  renderReviews();
+}
+
+function renderReviews(){
+  reviewList.innerHTML = TourStore.reviewsList.map(r=>`
+    <div class="review-card">
+      <b>${r.userName}</b> <span style="color:#0F766E">Ulasan untuk: ${r.destinationName}</span><br>
+      Rating: ${r.rating}<p>${r.comment}</p><small>${r.date}</small>
+    </div>
+  `).join('');
+}
+renderReviews();
+</script>
+</body>
+</html>
