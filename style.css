@@ -6,11 +6,12 @@
   --border:#E2E8F0;
 }
 *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-body{margin:0;background:var(--bg);color:var(--dark)}
+body{margin:0;background:var(--bg);color:var(--dark);padding-bottom:80px} /* biar gak ketutup bottom-nav */
 a{color:var(--primary);text-decoration:none}
 h1,h2,h3{margin:0 0 12px}
 small{color:#64748b}
 hr{border:none;border-top:1px solid var(--border);margin:16px 0}
+label{font-size:14px;font-weight:600;display:block;margin-bottom:6px;color:#334155}
 
 /* HERO */
 .hero{height:50vh;position:relative;color:white;background-size:cover;background-position:center}
@@ -25,7 +26,7 @@ header button{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,
 .stats{display:flex;justify-content:space-around;background:var(--card);margin:-16px 20px 0;padding:20px;border-radius:20px;box-shadow:0 5px 15px rgba(0,0,0,.08)}
 .stats b{color:var(--primary);font-size:20px;display:block}
 .section{padding:20px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:16px} /* responsive */
 .card{background:var(--card);padding:16px;border-radius:16px;border:1px solid var(--border)}
 
 /* SCROLL */
@@ -46,14 +47,14 @@ header button{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,
 .tab{flex:1;text-align:center;padding:12px;border-radius:12px;font-weight:bold;cursor:pointer}
 .tab.active{background:var(--primary);color:white}
 .form{display:none}.form.active{display:block}
-.input{width:100%;padding:16px;border:1px solid var(--border);border-radius:15px;margin-bottom:16px}
+.input{width:100%;padding:16px;border:1px solid var(--border);border-radius:15px;margin-bottom:16px;background:white}
 
 /* HOME */
 .container{padding:0 20px}
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
 .avatar{width:44px;height:44px;border-radius:50%;border:2px solid var(--primary)}
 .search{width:100%;padding:14px;border-radius:15px;border:1px solid var(--border);background:#F1F5F9}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid var(--border)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid var(--border);z-index:10}
 .bottom-nav a{display:flex;flex-direction:column;align-items:center;font-size:14px;color:#64748b;cursor:pointer}
 .bottom-nav a.active{color:var(--primary);font-weight:bold}
 
@@ -72,7 +73,7 @@ header button{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,
 .chip{padding:8px 16px;border:1px solid var(--border);border-radius:12px;margin-right:10px;display:inline-block;cursor:pointer}
 .chip.active{background:var(--primary);color:white;border-color:var(--primary)}
 .review-card{background:var(--card);padding:16px;border-radius:16px;border:1px solid var(--border);margin-bottom:12px}
-.sticky-bar{position:fixed;bottom:0;left:0;right:0;background:var(--card);padding:16px 20px;box-shadow:0 -2px 10px rgba(0,0,0,.1);display:flex;gap:20px;border-radius:20px 20px 0 0}
+.sticky-bar{position:fixed;bottom:0;left:0;right:0;background:var(--card);padding:16px 20px;box-shadow:0 -2px 10px rgba(0,0,0,.1);display:flex;gap:20px;border-radius:20px 20px 0 0;z-index:10}
 
 /* SCHEDULE */
 .schedule-card{background:var(--card);border-radius:20px;border:1px solid var(--border);margin-bottom:16px;display:flex;overflow:hidden}
@@ -83,12 +84,15 @@ header button{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,
 .badge.green{background:#d1fae5;color:var(--primary);padding:4px 10px;border-radius:20px;font-size:12px}
 
 /* BOARDING PASS */
-.boarding-pass{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center}
+.boarding-pass{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:20}
 .bp-content{background:var(--card);width:90%;max-width:400px;border-radius:20px;padding:20px}
 .qr{width:100%;height:40px;background:#F1F5F9;margin:16px 0;display:flex;align-items:center;justify-content:center;font-size:10px;word-break:break-all}
 
 /* PAYMENT */
 .invoice{background:var(--card);padding:16px;border-radius:20px;margin-bottom:14px;border:1px solid var(--border)}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:end}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:end;z-index:20}
 .modal-content{background:var(--card);border-radius:30px 30px 0 0;padding:24px}
 .payment-option{padding:12px;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;cursor:pointer}
+
+/* PROFILE */
+.profile-stats{display:flex;justify-content:space-around;text-align:center;background:var(--card);padding:16px;border-radius:16px;border:1px solid var(--border)}
