@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil Saya</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header style="background:#0F766E;color:white;text-align:center;padding:16px;font-weight:bold;position:relative">
+  Profil Saya
+  <button onclick="logout()" style="position:absolute;right:16px;top:12px;background:rgba(255,255,255,.2);border:none;color:white;padding:6px 12px;border-radius:10px;cursor:pointer">Logout</button>
+</header>
+
+<div style="padding:20px">
+  <div style="text-align:center;margin-bottom:24px">
+    <img id="avatarPreview" src="" width="100" height="100" style="border-radius:50%;border:3px solid #0F766E;object-fit:cover">
+    <input type="file" id="avatarInput" accept="image/*" style="display:none">
+    <button onclick="avatarInput.click()" style="margin-top:10px;background:transparent;border:1px solid #0F766E;color:#0F766E;padding:6px 16px;border-radius:10px;cursor:pointer">Ganti Foto</button>
+  </div>
+
+  <form onsubmit="saveProfile(event)" style="background:white;padding:20px;border-radius:20px;border:1px solid #eee">
+    <h3>Data Diri</h3>
+    <label>Nama Lengkap</label>
+    <input type="text" id="profName" class="input" required>
+
+    <label>Email</label>
+    <input type="email" id="profEmail" class="input" required>
+
+    <label>Nomor WhatsApp</label>
+    <input type="tel" id="profPhone" class="input" required>
+
+    <label>Password Baru <small>kosongkan jika tidak ganti</small></label>
+    <input type="password" id="profPass" class="input" placeholder="********">
+
+    <hr>
+    <h4>Statistik</h4>
+    <div style="display:flex;justify-content:space-around;text-align:center">
+      <div><b id="totalBooking">0</b><br><small>Total Pesanan</small></div>
+      <div><b id="totalPaid">0</b><br><small>Sudah Bayar</small></div>
+      <div><b id="totalReview">0</b><br><small>Ulasan</small></div>
+    </div>
+
+    <button type="submit" class="btn-primary" style="margin-top:20px">Simpan Perubahan</button>
+  </form>
+</div>
+
+<div class="bottom-nav">
+  <a onclick="location='home.html'">Home</a>
+  <a onclick="location='schedule.html'">Jadwal</a>
+  <a onclick="location='payment.html'">Pembayaran</a>
+  <a class="active">Profil</a>
+</div>
+
+<script src="script.js"></script>
+<script>
+if(!TourStore.currentUser){
+  alert('Silakan login dulu');
+  location='login.html';
+}
+
+const user = TourStore.currentUser;
+profName.value = user.name;
+profEmail.value = user.email;
+profPhone.value = user.phone;
+avatarPreview.src = user.avatarUrl;
+
+totalBooking.innerText = TourStore.bookingsList.length;
+totalPaid.innerText = TourStore.bookingsList.filter(b=>b.status=='Lunas').length;
+totalReview.innerText = TourStore.reviewsList.filter(r=>r.userName==user.name).length;
+
+avatarInput.onchange = e => {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = () => avatarPreview.src = reader.result;
+  reader.readAsDataURL(file);
+}
+
+function saveProfile(e){
+  e.preventDefault();
+  const oldEmail = user.email;
+  user.name = profName.value;
+  user.email = profEmail.value;
+  user.phone = profPhone.value;
+  if(profPass.value) user.password = profPass.value;
+  user.avatarUrl = avatarPreview.src;
+
+  // update di array USERS
+  const idx = USERS.findIndex(u=>u.email==oldEmail);
+  if(idx!= -1) USERS[idx] = user;
+
+  localStorage.setItem('users',JSON.stringify(USERS));
+  localStorage.setItem('currentUser',JSON.stringify(user));
+  alert('Profil berhasil disimpan!');
+}
+
+function logout(){
+  localStorage.removeItem('currentUser');
+  location='login.html';
+}
+</script>
+</body>
+</html>
