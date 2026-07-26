@@ -1,4 +1,4 @@
-// DATA DUMMY SAMA PERSIS KAYAK DART LU
+// DATA DUMMY SAMA PERSIS KAYAK DART
 const DESTINATIONS = [
   {id:1,name:"Pantai Kuta",location:"Bali",image:"assets/images/bali.jpg",description:"Pantai terkenal dengan keindahan matahari terbenam dan ombaknya yang cocok untuk berselancar. Tempat sempurna untuk bersantai dan menikmati suasana tropis.",price:500000,category:"Pantai",rating:4.8,reviewsCount:124,schedules:["08:00 WITA","13:00 WITA","16:30 WITA"]},
   {id:2,name:"Gunung Bromo",location:"Jawa Timur",image:"assets/images/bromo.jpg",description:"Rasakan petualangan menembus lautan pasir Bromo dan saksikan sunrise spektakuler dari puncak Penanjakan. Pengalaman yang tak terlupakan.",price:750000,category:"Gunung",rating:4.9,reviewsCount:98,schedules:["02:00 WIB","03:30 WIB","05:00 WIB"]},
@@ -141,4 +141,31 @@ function showBP(id){
     </div>
   `;
   bpModal.style.display='flex';
+}
+
+// Cetak Tiket
+function printTicket(bookingId){
+  const booking = TourStore.bookingsList.find(b=>b.id==bookingId);
+  const dest = TourStore.destinationsList.find(d=>d.id==booking.destinationId);
+  const w = window.open('', '', 'height=800,width=600');
+  w.document.write(`
+    <html><head><title>Tiket ${dest.name}</title>
+    <style>body{font-family:Arial;padding:40px} .box{border:2px dashed #0F766E;padding:20px;border-radius:15px} h1{color:#0F766E}</style>
+    </head><body>
+    <div class="box">
+      <h1>ASSISTANT TOUR</h1><hr>
+      <h2>${dest.name}</h2>
+      <p><b>ID Booking:</b> #${booking.id}</p>
+      <p><b>Nama:</b> ${TourStore.currentUser.name}</p>
+      <p><b>Tanggal:</b> ${new Date(booking.date).toLocaleDateString('id-ID')}</p>
+      <p><b>Transport:</b> ${booking.transport}</p>
+      <p><b>Jumlah Orang:</b> ${booking.persons}</p>
+      <p><b>Total Bayar:</b> Rp ${booking.total.toLocaleString('id-ID')}</p>
+      <hr><p style="text-align:center">Tunjukkan QR ini ke petugas</p>
+      <p style="text-align:center;font-size:12px">Terima kasih telah booking bersama kami</p>
+    </div>
+    <script>window.print()</script>
+    </body></html>
+  `);
+  w.document.close();
 }
