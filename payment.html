@@ -36,10 +36,10 @@
 let selectedBooking = null;
 let selectedMethod = 'GOPAY';
 const methods = [
-  {code:'GOPAY', name:'GoPay'},
-  {code:'OVO', name:'OVO'},
-  {code:'BCA_VA', name:'BCA Virtual Account'},
-  {code:'MANDIRI_VA', name:'Mandiri Virtual Account'}
+  {code:'GOPAY', name:'GoPay', icon:'📱'},
+  {code:'OVO', name:'OVO', icon:'💜'},
+  {code:'BCA_VA', name:'BCA Virtual Account', icon:'🏦'},
+  {code:'MANDIRI_VA', name:'Mandiri Virtual Account', icon:'🏦'}
 ];
 
 function render(){
@@ -54,20 +54,24 @@ function render(){
 
 function invoiceCard(b,isPaid){
   return `<div class="invoice">
-    <div style="display:flex;justify-content:space-between">
+    <div style="display:flex;justify-content:space-between;align-items:center">
       <b>${b.id}</b>
       <span class="badge ${isPaid?'green':'orange'}">${isPaid?'LUNAS':'PENDING'}</span>
     </div>
     <hr>
     <div style="display:flex;gap:14px">
-      <img src="${b.destImage}" width="70" style="border-radius:12px">
-      <div>
+      <img src="${b.destImage}" width="70" height="70" style="border-radius:12px;object-fit:cover">
+      <div style="flex:1">
         <b>${b.destName}</b><br>
-        <small>${b.date} - ${b.schedule}</small><br>
+        <small>${new Date(b.date).toLocaleDateString('id-ID')} - ${b.schedule}</small><br>
         <b style="color:#0F766E">${formatRupiah(b.total)}</b>
       </div>
     </div>
-    ${!isPaid ? `<button class="btn-primary" style="width:100%;margin-top:12px" onclick="showPayment('${b.id}')">Bayar Sekarang</button>` : ''}
+    <div style="display:flex;gap:10px;margin-top:12px">
+      ${!isPaid ? `<button class="btn-primary" style="flex:1" onclick="showPayment('${b.id}')">Bayar Sekarang</button>` : 
+      `<button class="btn-outline-dark" style="flex:1" onclick="printTicket('${b.id}')">Cetak Tiket</button>
+       <button class="btn-white" style="flex:1;border:1px solid var(--border)" onclick="showBoardingPass('${b.id}')">Boarding Pass</button>`}
+    </div>
   </div>`
 }
 
@@ -75,14 +79,28 @@ function showPayment(id){
   selectedBooking = TourStore.bookingsList.find(b=>b.id==id);
   bookingId.innerText = id;
   totalTagihan.innerText = formatRupiah(selectedBooking.total);
-  paymentMethods.innerHTML = methods.map(m=>`<div class="payment-option" onclick="selectedMethod='${m.code}'">${m.name}</div>`).join('');
+  paymentMethods.innerHTML = methods.map(m=>`
+    <div class="payment-option" data-code="${m.code}" onclick="selectMethod('${m.code}')">
+      <span style="font-size:20px">${m.icon}</span> ${m.name}
+    </div>
+  `).join('');
+  selectMethod('GOPAY'); // default
   paymentModal.style.display = 'flex';
 }
 
+function selectMethod(code){
+  selectedMethod = code;
+  document.querySelectorAll('.payment-option').forEach(el=>{
+    el.style.borderColor = el.dataset.code == code ? 'var(--primary)' : 'var(--border)';
+    el.style.background = el.dataset.code == code ? '#e6f4f1' : 'white';
+  });
+}
+
 function processPayment(){
+  selectedBooking.paymentMethod = selectedMethod; // simpan metode
   TourStore.confirmPayment(selectedBooking.id);
   paymentModal.style.display = 'none';
-  alert('Pembayaran Berhasil!');
+  alert(`Pembayaran Berhasil!\nMetode: ${selectedMethod}`);
   render();
 }
 
