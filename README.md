@@ -45,6 +45,7 @@ Konversi fitur **1:1** dari versi Flutter.
 - 💳 **Pembayaran**
   - Tab **Belum Bayar**
   - Tab **Sudah Bayar**
+  - **Cetak Tiket**
   - Metode pembayaran:
     - Transfer Bank
     - E-Wallet
@@ -61,8 +62,6 @@ Konversi fitur **1:1** dari versi Flutter.
   - Ganti password
   - Upload foto profil
   - Statistik pengguna
-
----
 
 ## 🔑 Akun Demo
 
